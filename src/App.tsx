@@ -26,7 +26,6 @@ export function App() {
           <BrowserRouter>
             <Toaster />
             <header>
-              Logo
               <Nav />
             </header>
             <main>

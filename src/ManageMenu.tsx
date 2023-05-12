@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { Button } from "./reusable/Button";
 import { Input } from "./reusable/Input";
 import { useNavigate, useParams } from "react-router-dom";
-import { getFood, postFood, putFood } from "./services/foods.service";
+import { getFood, postFood, putFood, deleteFood } from "./services/foods.service";
 import { Food, NewFood } from "./foods";
 import { useEffect, useState } from "react";
 import { Spinner } from "./reusable/Spinner";
@@ -20,8 +20,16 @@ export default function ManageMenu() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
+
+  async function deleteCurrFood() {
+    setIsDeleting(true);
+    await deleteFood(id);
+    toast.success("Food deleted.");
+    navigate("/");
+  }
 
   useEffect(() => {
     async function fetchFood() {
@@ -70,7 +78,7 @@ export default function ManageMenu() {
           value={food.price.toString()}
           onChange={onChange}
         />
-        <Button type="submit">{isSaving ? "Saving" : "Save"} Menu Item</Button>
+        <Button type="submit" style={{width: "185px"}}>Sav{isSaving ? "ing" : "e"} Menu Item</Button>
         {isSaving && <Spinner isLoading={isSaving} />}
       </form>
     );
@@ -82,6 +90,11 @@ export default function ManageMenu() {
     <>
       <h1>{id ? "Edit" : "Add"} Menu Item</h1>
       <Spinner isLoading={isLoading}>{renderForm()}</Spinner>
+      {id && !isLoading && <>
+        <Button className="mt-4 bg-red-600" style={{width: "185px"}} onClick={deleteCurrFood}>Delet{isDeleting ? "ing" : "e"} Menu Item</Button>
+        {isDeleting && <Spinner isLoading={isDeleting} />}
+        </>
+      }
     </>
   );
 }

@@ -31,7 +31,7 @@ export function Menu() {
           className="block"
           onClick={() => {
             deleteFoodMutation.mutate(food.id);
-            toast.success("Food deleted. 🦄");
+            toast.success("Food deleted.");
             // setFoods(foods.filter((f) => f.id !== food.id));
           }}
           type="button"
@@ -62,7 +62,7 @@ export function Menu() {
         </select>
 
         {tagFilter && (
-          <p>{`${filteredFoods.length} ${tagFilter} items found.`}</p>
+          <p>{`${filteredFoods.length} ${tagFilter} item${filteredFoods.length == 1 ? '' : 's'} found.`}</p>
         )}
 
         <div className="flex flex-wrap">{filteredFoods.map(renderFood)}</div>
