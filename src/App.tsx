@@ -17,6 +17,7 @@ export function App() {
     email: "c@h.com",
     id: "1",
     name: "Cory",
+    isAdmin: true
   });
   return (
     <QueryClientProvider client={queryClient}>
@@ -47,6 +48,7 @@ export function App() {
                       </ErrorBoundary>
                     }
                   />
+                  <Route path="*" element={<h1>Page not found.</h1>} />
                 </Routes>
               </ErrorBoundary>
             </main>

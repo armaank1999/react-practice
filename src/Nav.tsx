@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useUserContext } from "./context/UserContext";
 
 export function Nav() {
@@ -6,14 +6,11 @@ export function Nav() {
 
   return (
     <nav>
-      <p>Hello {user.name}</p>
+      {Object.entries(user).length > 0 && <p>Hello {user.name}</p>}
       <ul>
-        <li>
-          <Link to="/">Menu</Link>
-        </li>
-        <li>
-          <Link to="/manage">Manage Menu</Link>
-        </li>
+        <li><NavLink to="/" className={({ isActive, isPending }) =>
+    isPending ? "font-bold" : isActive ? "active" : ""}>Menu</NavLink></li>
+        { user.isAdmin && <li><NavLink to="/manage">Manage Menu</NavLink></li>}
       </ul>
     </nav>
   );
