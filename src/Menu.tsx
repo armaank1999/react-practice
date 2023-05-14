@@ -7,10 +7,12 @@ import { Link } from "react-router-dom";
 import { useGetFoodsQuery } from "./hooks/useGetFoodsQuery";
 import { useDeleteFood } from "./hooks/useDeleteFood";
 import { toast } from "react-hot-toast";
+import { useUserContext } from "./context/UserContext";
 
 export function Menu() {
+  const user = useUserContext();
   const [tagFilter, setTagFilter] = useState<FoodTag | "">("");
-
+  const [cart, setCart] = useState({});
   const getFoodsQuery = useGetFoodsQuery();
   const deleteFoodMutation = useDeleteFood();
 
@@ -22,12 +24,12 @@ export function Menu() {
   function renderFood(food: Food) {
     return (
       <Card key={food.id}>
-        <Link to={"/manage/" + food.id}>
+        {user.isAdmin ? <Link to={"/manage/" + food.id}>
           <h2 className="text-2xl font-bold">{food.name}</h2>
-        </Link>
+        </Link> : <h2 className="text-2xl font-bold">{food.name}</h2>}
         <p>{food.description}</p>
         <strong>${food.price}</strong>
-        <Button
+        {user.isAdmin ? <Button
           className="block"
           onClick={() => {
             deleteFoodMutation.mutate(food.id);
@@ -38,7 +40,7 @@ export function Menu() {
           aria-label={"Delete " + food.name}
         >
           Delete
-        </Button>
+        </Button> : <div>Number, plus, minus</div>}
       </Card>
     );
   }
@@ -73,6 +75,7 @@ export function Menu() {
   return (
     <>
       {getFoodsQuery.isRefetching && <p>Checking for fresh data...</p>}
+      {!user.isAdmin && <div class="fixed right-0 top-0">Cart</div>}
       <h1>Menu</h1>
       {
         <Spinner isLoading={getFoodsQuery.data.length === 0}>

@@ -8,9 +8,9 @@ export function Nav() {
     <nav>
       {Object.entries(user).length > 0 && <p>Hello {user.name}</p>}
       <ul>
-        <li><NavLink to="/" className={({ isActive, isPending }) =>
-    isPending ? "font-bold" : isActive ? "active" : ""}>Menu</NavLink></li>
-        { user.isAdmin && <li><NavLink to="/manage">Manage Menu</NavLink></li>}
+        <li><NavLink to="/" className={({ isActive, isPending }) => isActive ? "font-bold text-lg" : ""}>Menu</NavLink></li>
+        { user.isAdmin && <li><NavLink className={({ isActive, isPending }) => isActive ? "font-bold text-lg" : ""}
+          to="/manage" >Manage Menu</NavLink></li>}
       </ul>
     </nav>
   );

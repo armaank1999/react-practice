@@ -6,6 +6,7 @@ import { getFood, postFood, putFood, deleteFood } from "./services/foods.service
 import { Food, NewFood } from "./foods";
 import { useEffect, useState } from "react";
 import { Spinner } from "./reusable/Spinner";
+import { useUserContext } from "./context/UserContext";
 
 const newFood: NewFood = {
   name: "",
@@ -16,6 +17,10 @@ const newFood: NewFood = {
 };
 
 export default function ManageMenu() {
+  const user = useUserContext();
+  if (! user?.isAdmin) {
+    return (<h1 class="font-bold text-2xl">You do not have permission to view this page.</h1>);
+  }
   const [food, setFood] = useState<Food | NewFood>(newFood);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
