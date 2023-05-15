@@ -111,6 +111,7 @@ export default function ManageMenu() {
           onChange={onChange}
           error={errors.description}
           status={status}
+          multiline
         />
         <Input
           label="Price"

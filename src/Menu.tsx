@@ -23,24 +23,26 @@ export function Menu() {
 
   function renderFood(food: Food) {
     return (
-      <Card key={food.id}>
+      <Card key={food.id} className="flex flex-col justify-between">
         {user.isAdmin ? <Link to={"/manage/" + food.id}>
           <h2 className="text-2xl font-bold">{food.name}</h2>
         </Link> : <h2 className="text-2xl font-bold">{food.name}</h2>}
         <p>{food.description}</p>
-        <strong>${food.price}</strong>
-        {user.isAdmin ? <Button
-          className="block"
-          onClick={() => {
-            deleteFoodMutation.mutate(food.id);
-            toast.success("Food deleted.");
-            // setFoods(foods.filter((f) => f.id !== food.id));
-          }}
-          type="button"
-          aria-label={"Delete " + food.name}
-        >
-          Delete
-        </Button> : <div>Number, plus, minus</div>}
+        <div>
+          <strong>${food.price}</strong>
+          {user.isAdmin ? <Button
+            className="block"
+            onClick={() => {
+              deleteFoodMutation.mutate(food.id);
+              toast.success("Food deleted.");
+              // setFoods(foods.filter((f) => f.id !== food.id));
+            }}
+            type="button"
+            aria-label={"Delete " + food.name}
+          >
+            Delete
+          </Button> : <div>Number, plus, minus</div>}
+        </div>
       </Card>
     );
   }
@@ -56,17 +58,9 @@ export function Menu() {
           onChange={(event) => setTagFilter(event.target.value as FoodTag)}
         >
           <option value="">All items</option>
-          {foodTags.map((tag) => (
-            <option key={tag} value={tag}>
-              {tag}
-            </option>
-          ))}
+          {foodTags.map(tag => <option key={tag} value={tag}>{tag}</option>)}
         </select>
-
-        {tagFilter && (
-          <p>{`${filteredFoods.length} ${tagFilter} item${filteredFoods.length == 1 ? '' : 's'} found.`}</p>
-        )}
-
+        {tagFilter && <p>{`${filteredFoods.length} ${tagFilter} item${filteredFoods.length == 1 ? '' : 's'} found.`}</p>}
         <div className="flex flex-wrap">{filteredFoods.map(renderFood)}</div>
       </>
     );
@@ -77,11 +71,7 @@ export function Menu() {
       {getFoodsQuery.isRefetching && <p>Checking for fresh data...</p>}
       {!user.isAdmin && <div class="fixed right-0 top-0">Cart</div>}
       <h1>Menu</h1>
-      {
-        <Spinner isLoading={getFoodsQuery.data.length === 0}>
-          {renderMenu()}
-        </Spinner>
-      }
+      <Spinner isLoading={getFoodsQuery.data.length === 0}>{renderMenu()}</Spinner>
     </>
   );
 }
