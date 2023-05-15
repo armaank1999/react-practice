@@ -16,11 +16,23 @@ const newFood: NewFood = {
   tags: [],
 };
 
+export interface Errors {
+  id?: string;
+  name?: string;
+  image?: string;
+  price?: string;
+  description?: string;
+  tags?: string;
+}
+
+export type Status = "idle" | "submitted" | "saving";
+
 export default function ManageMenu() {
   const user = useUserContext();
   if (! user?.isAdmin) {
     return (<h1 class="font-bold text-2xl">You do not have permission to view this page.</h1>);
   }
+  const [status, setStatus] = useState<Status>("idle");
   const [food, setFood] = useState<Food | NewFood>(newFood);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -28,6 +40,15 @@ export default function ManageMenu() {
   const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
+
+  function getErrors() {
+    const errors: Errors = {};
+    if (!food.name) errors.name = "Food name is required.";
+    if (!food.description) errors.description = "Description is required.";
+    if (!food.price) errors.price = "Price is required.";
+    return errors;
+  }
+  const errors = getErrors();
 
   async function deleteCurrFood() {
     setIsDeleting(true);
@@ -63,27 +84,44 @@ export default function ManageMenu() {
       <form
         onSubmit={async (event) => {
           event.preventDefault();
+          // If there are errors, stop here.
+          if (Object.keys(errors).length > 0) {
+            setStatus("submitted");
+            return;
+          }
+          setStatus("saving");
           setIsSaving(true);
           id ? await putFood(food as Food) : await postFood(food);
           toast.success("Menu Item Saved.");
           navigate("/");
         }}
       >
-        <Input id="name" label="Name" value={food.name} onChange={onChange} />
         <Input
-          id="description"
+          label="Name"
+          id="name"
+          value={food.name}
+          onChange={onChange}
+          error={errors.name}
+          status={status}
+        />
+        <Input
           label="Description"
+          id="description"
           value={food.description}
           onChange={onChange}
+          error={errors.description}
+          status={status}
         />
         <Input
-          id="price"
           label="Price"
+          id="price"
           type="number"
-          value={food.price.toString()}
+          value={food.price ?? ""}
           onChange={onChange}
+          error={errors.price}
+          status={status}
         />
-        <Button type="submit" style={{width: "185px"}}>Sav{isSaving ? "ing" : "e"} Menu Item</Button>
+        <Button type="submit" style={{width: "195px"}}>Sav{isSaving ? "ing" : "e"} Menu Item</Button>
         {isSaving && <Spinner isLoading={isSaving} />}
       </form>
     );
@@ -96,7 +134,7 @@ export default function ManageMenu() {
       <h1>{id ? "Edit" : "Add"} Menu Item</h1>
       <Spinner isLoading={isLoading}>{renderForm()}</Spinner>
       {id && !isLoading && <>
-        <Button className="mt-4 bg-red-600" style={{width: "185px"}} onClick={deleteCurrFood}>Delet{isDeleting ? "ing" : "e"} Menu Item</Button>
+        <Button className="mt-4" bgColor="red" style={{width: "195px"}} onClick={deleteCurrFood}>Delet{isDeleting ? "ing" : "e"} Menu Item</Button>
         {isDeleting && <Spinner isLoading={isDeleting} />}
         </>
       }

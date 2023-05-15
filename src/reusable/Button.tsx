@@ -8,15 +8,14 @@ type ButtonType = typeof buttonTypes[number];
 // But specifying a few that we always want to require.
 interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   children: React.ReactNode;
-
-  /** Button type */
   type: ButtonType;
+  bgColor?: str;
 }
 
-export function Button({ children, className, ...rest }: ButtonProps) {
+export function Button({ children, className, bgColor = "sky", ...rest }: ButtonProps) {
   return (
     <button
-      className={clsx("text-white border bg-sky-600", className)}
+      className={clsx(`text-white border bg-${bgColor}-600`, className)}
       {...rest}
     >
       {children}
